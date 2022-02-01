@@ -15,13 +15,16 @@ import { setCurrentUser } from './redux/user/user.actions';
 import { createStructuredSelector } from 'reselect';
 import { selectCurrentUser } from './redux/user/user.selectors';
 
+import { selectCollectionsForPreview } from './redux/shop/shop.selector';
+import { addCollectionAndDocuments } from './firebase/firebase.utils';
 class App extends React.Component {
 
 
   unsubscribeFromAuth = null;
 
   componentDidMount() {
-    const { setCurrentUser } = this.props;
+    const { setCurrentUser, collectionForPreview } = this.props;
+
 
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
       if (userAuth) {
@@ -35,6 +38,8 @@ class App extends React.Component {
         });
       }
       setCurrentUser(userAuth);
+      // PER ME I SHTU SHOP DATA NE FIREBASE
+      // addCollectionAndDocuments('collections', collectionForPreview.map(({ title, items }) => ({ title, items })));
     });
   }
   componentWillUnmount() {
@@ -57,7 +62,8 @@ class App extends React.Component {
 }
 
 const mapStateToProps = createStructuredSelector({
-  currentUser: selectCurrentUser
+  currentUser: selectCurrentUser,
+  collectionForPreview: selectCollectionsForPreview
 })
 const mapDispatchToProps = dispatch => ({
   setCurrentUser: user => dispatch(setCurrentUser(user))

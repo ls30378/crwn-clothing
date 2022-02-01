@@ -38,6 +38,42 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
         }
     }
     return userRef;
+
+}
+
+
+
+// PER ME I SHTU SHOP DATA NE FIRBASE
+// export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => {
+//     const collectionRef = firestore.collection(collectionKey);
+//     console.log(collectionRef);
+
+//     const batch = firestore.batch();
+//     objectsToAdd.forEach(obj => {
+//         const newDocRef = collectionRef.doc();
+//         batch.set(newDocRef, obj);
+//     });
+//     return await batch.commit();
+// };
+
+
+
+export const convertCollectionsSnapshotToMap = collections => {
+    const transformedCollection = collections.docs.map(
+        doc => {
+            const { title, items } = doc.data();
+            return {
+                routeName: encodeURI(title.toLowerCase()),
+                id: doc.id,
+                title,
+                items
+            }
+        }
+    )
+    return transformedCollection.reduce((accumulator, collections) => {
+        accumulator[collections.title.toLowerCase()] = collections;
+        return accumulator;
+    }, {});
 }
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
