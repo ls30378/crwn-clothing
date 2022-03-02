@@ -17,30 +17,15 @@ import { selectCurrentUser } from './redux/user/user.selectors';
 
 import { selectCollectionsForPreview } from './redux/shop/shop.selector';
 import { addCollectionAndDocuments } from './firebase/firebase.utils';
+import { checkUserSession } from './redux/user/user.actions'
 class App extends React.Component {
 
 
   unsubscribeFromAuth = null;
 
   componentDidMount() {
-    const { setCurrentUser, collectionForPreview } = this.props;
-
-
-    this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
-      if (userAuth) {
-        const userRef = await createUserProfileDocument(userAuth);
-        userRef.onSnapshot(snapShot => {
-          setCurrentUser({
-
-            id: snapShot.id,
-            ...snapShot.data()
-          });
-        });
-      }
-      setCurrentUser(userAuth);
-      // PER ME I SHTU SHOP DATA NE FIREBASE
-      // addCollectionAndDocuments('collections', collectionForPreview.map(({ title, items }) => ({ title, items })));
-    });
+    const { checkUserSession } = this.props;
+    checkUserSession();
   }
   componentWillUnmount() {
     this.unsubscribeFromAuth();
@@ -66,6 +51,6 @@ const mapStateToProps = createStructuredSelector({
   collectionForPreview: selectCollectionsForPreview
 })
 const mapDispatchToProps = dispatch => ({
-  setCurrentUser: user => dispatch(setCurrentUser(user))
+  checkUserSession: () => dispatch(checkUserSession())
 })
 export default connect(mapStateToProps, mapDispatchToProps)(App);
